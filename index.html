@@ -1,389 +1,404 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple To‑Do List</title>
-  <meta name="description" content="A tiny, fast to‑do list web app in a single HTML file with localStorage." />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>Simple To‑Do List — Red Background</title>
+  <meta name="description" content="A tiny, fast to‑do list web app with a bold red background. Runs entirely in your browser and saves tasks to localStorage." />
   <style>
     :root{
-      --bg-red: red;               /* Per brief: make background red */
-      --card: #ffffff;
-      --text: #111;
-      --muted: #555;
-      --accent: #2563eb;
-      --accent-contrast: #ffffff;
-      --border: #e5e7eb;
-      --shadow: 0 10px 20px rgba(0,0,0,0.15);
-      --radius: 14px;
-      --focus: 2px solid #2563eb;
-      --danger: #dc2626;
-      --danger-contrast: #fff;
-      --success: #16a34a;
+      --red-bg: #d32f2f;      /* page background */
+      --red-dark: #b71c1c;    /* button hover */
+      --ink: #1f2937;         /* primary text */
+      --muted: #6b7280;       /* secondary text */
+      --card: #ffffff;        /* app surface */
+      --line: #e5e7eb;        /* borders */
+      --focus: #2563eb;       /* focus ring */
+      --accent: #d32f2f;      /* accent */
+      --shadow: 0 10px 30px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.08);
+      color-scheme: light;
     }
-
-    html, body {
-      height: 100%;
-    }
-
-    body {
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      color: var(--text);
-      background: var(--bg-red);
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--red-bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       display: grid;
       place-items: center;
-      line-height: 1.4;
+      padding: 24px;
     }
-
-    .app {
-      width: min(720px, calc(100vw - 24px));
+    .app{
+      width: 100%;
+      max-width: 720px;
       background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius: 14px;
       box-shadow: var(--shadow);
-      overflow: clip;
+      overflow: hidden;
     }
-
-    header {
-      padding: 20px 22px 10px;
-      background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
-      border-bottom: 1px solid var(--border);
+    header{
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff, #fafafa);
     }
-
-    header h1 {
-      margin: 0 0 4px;
-      font-size: 1.35rem;
-      letter-spacing: 0.2px;
+    header h1{
+      margin: 0 0 4px 0;
+      font-size: 22px;
+      letter-spacing: .2px;
     }
-
-    header p {
+    header p{
       margin: 0;
+      font-size: 13px;
       color: var(--muted);
-      font-size: 0.92rem;
     }
-
-    .controls {
+    .add{
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 10px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      background: #fff;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
     }
-
-    .visually-hidden {
+    .sr-only{
       position: absolute !important;
-      width: 1px; height: 1px;
-      padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0 0 0 0);
-      white-space: nowrap; border: 0;
+      height: 1px; width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap;
     }
-
-    .input-wrap {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      background: #fff;
-      border: 1px solid var(--border);
+    input[type="text"]{
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
       border-radius: 10px;
-      padding: 8px 10px;
-    }
-
-    .input-wrap input[type="text"] {
-      flex: 1;
-      font-size: 1rem;
-      border: none;
+      font-size: 15px;
+      background: #fff;
       outline: none;
-      background: transparent;
-      min-width: 0;
+      transition: border-color .15s ease, box-shadow .15s ease;
     }
-
-    .btn {
+    input[type="text"]::placeholder{ color: #9ca3af; }
+    input[type="text"]:focus{
+      border-color: var(--focus);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 20%, transparent);
+    }
+    button{
       appearance: none;
-      border: 1px solid var(--border);
-      background: #fff;
-      color: var(--text);
-      padding: 10px 14px;
-      font-size: 0.98rem;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform .02s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
-    }
-
-    .btn:active { transform: translateY(1px); }
-
-    .btn.primary {
+      border: none;
       background: var(--accent);
-      border-color: var(--accent);
-      color: var(--accent-contrast);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background .15s ease, transform .02s ease-in-out, box-shadow .15s ease;
+      box-shadow: 0 2px 8px rgba(180, 0, 0, .18);
     }
-
-    .btn.danger {
-      background: var(--danger);
-      border-color: var(--danger);
-      color: var(--danger-contrast);
+    button:hover{ background: var(--red-dark); }
+    button:active{ transform: translateY(1px); }
+    button:focus-visible{
+      outline: 3px solid color-mix(in srgb, var(--focus) 80%, transparent);
+      outline-offset: 2px;
     }
-
-    .btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .toolbar {
+    .toolbar{
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
+      gap: 12px;
       justify-content: space-between;
-      gap: 8px;
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--line);
       background: #fff;
     }
-
-    .counter {
+    .counts{
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 13px;
     }
-
-    ul#todo-list {
+    .toolbar .secondary{
+      background: #f3f4f6;
+      color: #111827;
+      box-shadow: none;
+    }
+    .toolbar .secondary:hover{ background: #e5e7eb; }
+    ul.tasks{
       list-style: none;
-      padding: 0;
       margin: 0;
-      background: #fff;
+      padding: 4px 8px 8px;
+      max-height: 55vh;
+      overflow: auto;
     }
-
-    li.todo {
+    .task{
       display: grid;
       grid-template-columns: auto 1fr auto;
-      gap: 10px;
       align-items: center;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
+      gap: 12px;
+      padding: 10px 12px;
+      border-bottom: 1px dashed var(--line);
     }
-
-    .todo:last-child {
-      border-bottom: none;
-    }
-
-    .todo input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
+    .task:last-child{ border-bottom: none; }
+    .task input[type="checkbox"]{
+      width: 18px; height: 18px;
       cursor: pointer;
-      accent-color: var(--success);
+      accent-color: var(--accent);
     }
-
-    .todo .title {
-      overflow-wrap: anywhere;
+    .task label{
+      display: block;
+      padding: 8px 6px;
+      border-radius: 8px;
+      word-break: break-word;
+      cursor: pointer;
     }
-
-    .todo.completed .title {
+    .task.completed label{
+      color: #9ca3af;
       text-decoration: line-through;
-      color: var(--muted);
     }
-
-    .icon-btn {
-      border: none;
+    .del{
       background: transparent;
-      color: var(--muted);
+      color: #ef4444;
       padding: 8px;
       border-radius: 8px;
-      cursor: pointer;
+      box-shadow: none;
     }
-
-    .icon-btn:hover {
-      background: #f3f4f6;
-      color: #111;
-    }
-
-    .footer {
-      padding: 14px 16px 18px;
-      color: var(--muted);
-      font-size: 0.9rem;
+    .del:hover{ background: #fee2e2; }
+    .empty{
+      padding: 20px;
       text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    footer{
+      padding: 12px 20px 18px;
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      border-top: 1px solid var(--line);
       background: #fff;
-      border-top: 1px solid var(--border);
-      border-bottom-left-radius: var(--radius);
-      border-bottom-right-radius: var(--radius);
     }
-
-    /* Focus styles */
-    .btn:focus-visible,
-    .icon-btn:focus-visible,
-    input[type="text"]:focus-visible,
-    input[type="checkbox"]:focus-visible {
-      outline: var(--focus);
-      outline-offset: 2px;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    .link{
+      color: #374151;
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
-
-    /* Small screens */
-    @media (max-width: 480px) {
-      header h1 { font-size: 1.2rem; }
-      .btn { padding: 10px 12px; }
-      .controls { grid-template-columns: 1fr; }
-      .toolbar { flex-direction: column; align-items: stretch; }
+    @media (max-width: 520px){
+      .add{ grid-template-columns: 1fr; }
+      button{ width: 100%; }
+      .toolbar{ gap: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      *{ transition: none !important; animation: none !important; }
     }
   </style>
 </head>
 <body>
-  <main class="app" aria-labelledby="app-title">
+  <main class="app" aria-labelledby="title">
     <header>
-      <h1 id="app-title">To‑Do List</h1>
-      <p>Fast, lightweight, and private — your tasks stay in your browser.</p>
+      <h1 id="title">Simple To‑Do List</h1>
+      <p>Fast, local, no sign‑in. Background is proudly red.</p>
     </header>
 
-    <section class="controls" aria-label="Add a new task">
-      <div class="input-wrap">
-        <label class="visually-hidden" for="new-task">New task</label>
-        <input id="new-task" type="text" placeholder="What do you need to do?" autocomplete="off" />
-      </div>
-      <button id="add-btn" class="btn primary" type="button" aria-label="Add task">Add</button>
-    </section>
+    <form class="add" id="add-form" autocomplete="off">
+      <label for="new-task" class="sr-only">Add a new task</label>
+      <input id="new-task" name="task" type="text" placeholder="What do you want to do?" required>
+      <button type="submit" aria-label="Add task">Add</button>
+    </form>
 
-    <div class="toolbar" aria-label="Task actions">
-      <div class="counter" aria-live="polite" aria-atomic="true" id="counter">0 tasks</div>
-      <button id="clear-completed" class="btn danger" type="button" disabled>Clear completed</button>
+    <div class="toolbar" role="region" aria-label="Task controls">
+      <div class="counts" id="counts" aria-live="polite">0 remaining · 0 total</div>
+      <button class="secondary" id="clear-completed" type="button" aria-label="Clear completed tasks">Clear completed</button>
     </div>
 
-    <ul id="todo-list" role="list" aria-label="To‑Do items"></ul>
+    <ul class="tasks" id="list" role="list" aria-live="polite"></ul>
+    <div class="empty" id="empty" hidden>No tasks yet. Add one above to get started.</div>
 
-    <div class="footer">
-      Tip: Press Enter to add a task. Your list is saved automatically.
-    </div>
+    <footer>
+      <span>Data is stored only in your browser (localStorage).</span>
+      <span>MIT Licensed</span>
+    </footer>
   </main>
 
   <script>
     (function(){
       'use strict';
 
-      const STORAGE_KEY = 'todo-list-v1';
+      const STORAGE_KEY = 'todo.tasks.v2';
+      const $ = sel => document.querySelector(sel);
 
-      /** @type {{id:string,text:string,completed:boolean,created:number}[]} */
-      let items = [];
+      const listEl = $('#list');
+      const countsEl = $('#counts');
+      const emptyEl = $('#empty');
+      const formEl = $('#add-form');
+      const inputEl = $('#new-task');
+      const clearBtn = $('#clear-completed');
 
-      const el = {
-        input: document.getElementById('new-task'),
-        add: document.getElementById('add-btn'),
-        list: document.getElementById('todo-list'),
-        clear: document.getElementById('clear-completed'),
-        counter: document.getElementById('counter'),
-      };
+      /** @type {{id:string,text:string,completed:boolean}[]} */
+      let tasks = load();
 
-      // Utilities
-      const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      function uid(){
+        return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+      }
 
-      const save = () => {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-        } catch (e) {
-          // Ignore quota errors for this simple app
-        }
-      };
-
-      const load = () => {
-        try {
+      function load(){
+        try{
           const raw = localStorage.getItem(STORAGE_KEY);
-          if (raw) items = JSON.parse(raw) || [];
-          // Normalize shape
-          items = items.map(t => ({
-            id: String(t.id || uid()),
-            text: String(t.text || '').trim(),
-            completed: Boolean(t.completed),
-            created: Number(t.created || Date.now())
-          }));
-        } catch (e) {
-          items = [];
+          if(!raw) return [];
+          const data = JSON.parse(raw);
+          if(Array.isArray(data)) return data.filter(x => typeof x.text === 'string');
+          return [];
+        }catch(e){
+          console.warn('Failed to load tasks:', e);
+          return [];
         }
-      };
+      }
+
+      function save(){
+        try{
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        }catch(e){
+          console.warn('Failed to save tasks:', e);
+        }
+      }
 
       function render(){
-        // Clear list
-        el.list.innerHTML = '';
+        listEl.innerHTML = '';
+        if(tasks.length === 0){
+          emptyEl.hidden = false;
+          updateCounts();
+          return;
+        } else {
+          emptyEl.hidden = true;
+        }
 
-        // Sort by creation time (oldest first)
-        const sorted = [...items].sort((a,b) => a.created - b.created);
-
-        for (const item of sorted) {
+        const frag = document.createDocumentFragment();
+        for(const t of tasks){
           const li = document.createElement('li');
-          li.className = 'todo' + (item.completed ? ' completed' : '');
-          li.dataset.id = item.id;
+          li.className = 'task' + (t.completed ? ' completed' : '');
+          li.dataset.id = t.id;
 
-          // Checkbox
           const cb = document.createElement('input');
           cb.type = 'checkbox';
-          cb.checked = item.completed;
-          cb.setAttribute('aria-label', item.completed ? 'Mark as not completed' : 'Mark as completed');
-          cb.addEventListener('change', () => toggle(item.id));
+          cb.checked = !!t.completed;
+          cb.setAttribute('aria-label', 'Toggle completion');
 
-          // Title
-          const title = document.createElement('span');
-          title.className = 'title';
-          title.textContent = item.text;
+          const label = document.createElement('label');
+          label.textContent = t.text;
 
-          // Delete button
           const del = document.createElement('button');
-          del.className = 'icon-btn';
+          del.className = 'del';
           del.type = 'button';
-          del.title = 'Delete task';
           del.setAttribute('aria-label', 'Delete task');
-          del.innerHTML = '🗑️';
-          del.addEventListener('click', () => remove(item.id));
+          del.innerHTML = trashIcon();
 
-          li.append(cb, title, del);
-          el.list.appendChild(li);
+          li.appendChild(cb);
+          li.appendChild(label);
+          li.appendChild(del);
+          frag.appendChild(li);
         }
-
-        const total = items.length;
-        const remaining = items.filter(t => !t.completed).length;
-        el.counter.textContent = `${total} ${total === 1 ? 'task' : 'tasks'} • ${remaining} left`;
-        el.clear.disabled = items.every(t => !t.completed);
+        listEl.appendChild(frag);
+        updateCounts();
       }
 
-      function add(){
-        const text = (el.input.value || '').trim();
-        if (!text) return;
-        items.push({ id: uid(), text, completed: false, created: Date.now() });
-        el.input.value = '';
+      function updateCounts(){
+        const total = tasks.length;
+        const remaining = tasks.filter(t => !t.completed).length;
+        countsEl.textContent = `${remaining} remaining · ${total} total`;
+      }
+
+      function addTask(text){
+        const trimmed = text.trim();
+        if(!trimmed) return;
+        tasks.unshift({ id: uid(), text: trimmed, completed: false });
         save();
         render();
-        el.input.focus();
       }
 
-      function toggle(id){
-        const i = items.findIndex(t => t.id === id);
-        if (i >= 0) {
-          items[i].completed = !items[i].completed;
-          save();
-          render();
-        }
-      }
-
-      function remove(id){
-        items = items.filter(t => t.id !== id);
+      function setCompleted(id, completed){
+        const t = tasks.find(x => x.id === id);
+        if(!t) return;
+        t.completed = !!completed;
         save();
-        render();
+        renderRow(id);
+        updateCounts();
+      }
+
+      function renderRow(id){
+        const li = listEl.querySelector(`.task[data-id="${CSS.escape(id)}"]`);
+        const t = tasks.find(x => x.id === id);
+        if(!li || !t) return render(); // fallback full render
+        li.classList.toggle('completed', t.completed);
+      }
+
+      function deleteTask(id){
+        const idx = tasks.findIndex(x => x.id === id);
+        if(idx === -1) return;
+        tasks.splice(idx, 1);
+        save();
+        const li = listEl.querySelector(`.task[data-id="${CSS.escape(id)}"]`);
+        if(li) li.remove();
+        updateCounts();
+        if(tasks.length === 0) emptyEl.hidden = false;
       }
 
       function clearCompleted(){
-        items = items.filter(t => !t.completed);
+        const hadCompleted = tasks.some(t => t.completed);
+        if(!hadCompleted) return;
+        tasks = tasks.filter(t => !t.completed);
         save();
         render();
       }
 
-      // Event wiring
-      el.add.addEventListener('click', add);
-      el.input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') add();
+      formEl.addEventListener('submit', (e) => {
+        e.preventDefault();
+        addTask(inputEl.value);
+        inputEl.value = '';
+        inputEl.focus();
       });
-      el.clear.addEventListener('click', clearCompleted);
 
-      // Init
-      load();
+      listEl.addEventListener('click', (e) => {
+        const target = e.target;
+        const li = target.closest('.task');
+        if(!li) return;
+        const id = li.dataset.id;
+
+        if(target.matches('input[type="checkbox"]')){
+          setCompleted(id, target.checked);
+        }else if(target.closest('.del')){
+          deleteTask(id);
+        }
+      });
+
+      // Toggle via clicking the label
+      listEl.addEventListener('click', (e) => {
+        const label = e.target.closest('label');
+        if(!label) return;
+        const li = label.closest('.task');
+        if(!li) return;
+        const id = li.dataset.id;
+        const checkbox = li.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
+        setCompleted(id, checkbox.checked);
+      });
+
+      clearBtn.addEventListener('click', clearCompleted);
+
+      // Initial paint
       render();
 
-      // Optional: expose for debugging
-      window.todoApp = { add, remove, toggle, clearCompleted, get items(){ return items; } };
+      // Focus input on load to encourage quick entry
+      setTimeout(() => inputEl.focus(), 0);
+
+      function trashIcon(){
+        return `
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V7H4V5h4V4a1 1 0 0 1 1-1zm2 2v1h2V5h-2zM7 7v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7H7zm3 3h2v8h-2v-8z"/>
+          </svg>
+        `;
+      }
     })();
   </script>
 </body>
