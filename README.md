@@ -1,34 +1,33 @@
-# Simple To‑Do List (Static HTML)
+# Simple To‑Do List (Red Background Edition)
 
-A tiny, fast to‑do list web app implemented in a single HTML file (with inline CSS/JS). It runs entirely in the browser and persists tasks using localStorage. Perfect for GitHub Pages.
+A tiny, fast to‑do list web app implemented as a single HTML file with inline CSS/JS. It runs entirely in your browser and saves tasks to localStorage. This version features a red page background per the new brief, while keeping the task area readable with a clean white card.
 
 ## Overview
-- Single-file app: easy to host anywhere
-- Instant load, no build tools or frameworks
+- Single-file app: dead simple to host anywhere
+- Instant load, no frameworks or build steps
 - Add, complete, delete tasks
 - Clear all completed tasks
-- Tasks are saved locally in your browser
-- Accessible labels and keyboard-friendly interactions
+- Tasks persist via localStorage
+- Accessible labels, keyboard-friendly
+- Bold visual style with a red page background
 
-License: MIT (see below).
+License: MIT.
 
 ## Setup
-You can run this locally or deploy to GitHub Pages.
-
-Local:
+Local
 - Download index.html
-- Double-click to open it in your browser
+- Double‑click to open in your browser
 
-GitHub Pages:
-- Create a new public repository on GitHub (for example: todo-sample)
-- Add the provided index.html and this README.md to the repository root
+GitHub Pages
+- Create a new public repository
+- Add index.html and this README.md to the repository root
 - Commit and push
 - In your repo, go to Settings → Pages
 - Under “Build and deployment”, choose “Deploy from a branch”
-- Set Branch to main (or your default) and folder to / (root)
-- Save. Your site will be available at https://<your-username>.github.io/<repo-name> within a minute
+- Set Branch to main and Folder to / (root), then Save
+- Your site will be available at https://<your-username>.github.io/<repo-name> shortly
 
-Tip: Ensure the file is named exactly index.html at the repository root so GitHub Pages serves it as the default page.
+Tip: Make sure the main file is named exactly index.html in the repository root.
 
 ## Usage
 - Add a task:
@@ -36,11 +35,17 @@ Tip: Ensure the file is named exactly index.html at the repository root so GitHu
 - Complete a task:
   - Click the checkbox to toggle completion; completed tasks show strikethrough
 - Delete a task:
-  - Click the trash/delete button on the task
+  - Click the trash icon on the task
 - Clear completed:
   - Click “Clear completed” to remove all completed tasks at once
 - Persistence:
   - Tasks are saved in your browser’s localStorage. Clearing site data or switching browsers/devices will reset the list.
+
+## Improvements from Previous Version (Round 2)
+- Red background applied to the entire page to match the new brief
+- Visual refinement to preserve readability: tasks are displayed on a white, rounded card with subtle shadow over the red background
+- Improved accessibility and focus styles for buttons, inputs, and checkboxes
+- Slightly clearer toolbar with live-updating task counters
 
 ## License
 MIT License
