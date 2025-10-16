@@ -1,6 +1,6 @@
 # Simple To‑Do List (Red Background Edition)
 
-A tiny, fast to‑do list web app implemented as a single HTML file with inline CSS/JS. It runs entirely in your browser and saves tasks to localStorage. This version features a red page background per the new brief, while keeping the task area readable with a clean white card.
+A tiny, fast to‑do list web app implemented as a single HTML file with inline CSS/JS. It runs entirely in your browser and saves tasks to localStorage. This version features a bold red page background while keeping the task area readable on a clean white card.
 
 ## Overview
 - Single-file app: dead simple to host anywhere
@@ -8,8 +8,8 @@ A tiny, fast to‑do list web app implemented as a single HTML file with inline 
 - Add, complete, delete tasks
 - Clear all completed tasks
 - Tasks persist via localStorage
-- Accessible labels, keyboard-friendly
-- Bold visual style with a red page background
+- Accessible labels, keyboard-friendly, visible focus rings
+- Red page background as requested, with high-contrast, readable task UI
 
 License: MIT.
 
@@ -33,7 +33,7 @@ Tip: Make sure the main file is named exactly index.html in the repository root.
 - Add a task:
   - Type your task into the input and press Enter or click Add
 - Complete a task:
-  - Click the checkbox to toggle completion; completed tasks show strikethrough
+  - Click the checkbox (or the task text) to toggle completion; completed tasks show strikethrough
 - Delete a task:
   - Click the trash icon on the task
 - Clear completed:
@@ -42,10 +42,11 @@ Tip: Make sure the main file is named exactly index.html in the repository root.
   - Tasks are saved in your browser’s localStorage. Clearing site data or switching browsers/devices will reset the list.
 
 ## Improvements from Previous Version (Round 2)
-- Red background applied to the entire page to match the new brief
-- Visual refinement to preserve readability: tasks are displayed on a white, rounded card with subtle shadow over the red background
-- Improved accessibility and focus styles for buttons, inputs, and checkboxes
-- Slightly clearer toolbar with live-updating task counters
+- Applied a solid red background to the entire page to meet the new brief
+- Preserved readability with a white, rounded task card and subtle shadow over the red background
+- Clearer, accessible focus styles for inputs and buttons
+- Live-updating counters showing remaining and total tasks
+- Minor rendering optimizations (event delegation and partial row updates)
 
 ## License
 MIT License
